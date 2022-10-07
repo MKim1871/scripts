@@ -5,6 +5,10 @@ echo "In dedication to Matthew DuBruh, patron saint of Team 1"
 echo "Last Modified on"
 echo "Linux Ubuntu Script All-Purpose"
 
+touch ~/Desktop/Script.log
+echo > ~/Desktop/Script.log
+chmod 777 ~/Desktop/Script.log
+
 startTime=$(date +"%s")
 scriptLog()
 {
@@ -27,10 +31,6 @@ scriptLog()
 		fi
 	fi
 }
-
-touch ~/Desktop/Script.log
-echo > ~/Desktop/Script.log
-chmod 777 ~/Desktop/Script.log
 
 if [[ $EUID -ne 0 ]]
 then
