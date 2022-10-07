@@ -6,7 +6,7 @@ echo "Last Modified on"
 echo "Linux Ubuntu Script All-Purpose"
 
 startTime=$(date +"%s")
-printTime()
+scriptLog()
 {
 	endTime=$(date +"%s")
 	diffTime=$(($endTime-$startTime))
@@ -37,9 +37,9 @@ then
   echo Please run as root
   exit
 fi
-printTime "Script is being run as root."
+scriptLog "Script is being run as root."
 
-printTime "The current OS is Linux Ubuntu."
+scriptLog "The current OS is Linux Ubuntu."
 
 echo Does this machine need Samba?
 read sambaYN
@@ -63,18 +63,18 @@ echo Does this machine allow media files?
 read mediaFilesYN
 
 clear
-printTime "Check for any user folders that do not belong to any users in /home/."
+scriptLog "Check for any user folders that do not belong to any users in /home/."
 ls -a /home/ >> ~/Desktop/Script.log
 
 clear
-printTime "Check for any files for users that should not be administrators in /etc/sudoers.d."
+scriptLog "Check for any files for users that should not be administrators in /etc/sudoers.d."
 ls -a /etc/sudoers.d >> ~/Desktop/Script.log
 
 clear
 apt-get install ufw -y -qq
 ufw enable
 ufw deny 1337
-printTime "Firewall enabled and port 1337 blocked."
+scriptLog "Firewall enabled and port 1337 blocked."
 
 
 clear
@@ -89,7 +89,7 @@ then
 	apt-get purge samba-common-bin -y -qq
 	apt-get purge samba4 -y -qq
 	clear
-	printTime "netbios-ns, netbios-dgm, netbios-ssn, and microsoft-ds ports have been denied. Samba has been removed."
+	scriptLog "netbios-ns, netbios-dgm, netbios-ssn, and microsoft-ds ports have been denied. Samba has been removed."
 elif [ $sambaYN == yes ]
 then
 	ufw allow netbios-ns
@@ -111,14 +111,14 @@ then
 	for (( i=0;i<$usersSMBLength;i++))
 	do
 		echo -e 'Moodle!22\nMoodle!22' | smbpasswd -a ${usersSMB[${i}]}
-		printTime "${usersSMB[${i}]} has been given the password 'Moodle!22' for Samba."
+		scriptLog "${usersSMB[${i}]} has been given the password 'Moodle!22' for Samba."
 	done
-	printTime "netbios-ns, netbios-dgm, netbios-ssn, and microsoft-ds ports have been denied. Samba config file has been configured."
+	scriptLog "netbios-ns, netbios-dgm, netbios-ssn, and microsoft-ds ports have been denied. Samba config file has been configured."
 	clear
 else
 	echo Response not recognized.
 fi
-printTime "Samba is complete."
+scriptLog "Samba is complete."
 
 clear
 if [ $ftpYN == no ]
@@ -129,7 +129,7 @@ then
 	ufw deny ftps-data 
 	ufw deny ftps
 	apt-get purge vsftpd -y -qq
-	printTime "vsFTPd has been removed. ftp, sftp, saft, ftps-data, and ftps ports have been denied on the firewall."
+	scriptLog "vsFTPd has been removed. ftp, sftp, saft, ftps-data, and ftps ports have been denied on the firewall."
 elif [ $ftpYN == yes ]
 then
 	ufw allow ftp 
@@ -141,11 +141,11 @@ then
 	cp /etc/vsftpd.conf ~/Desktop/backups/
 	gedit /etc/vsftpd/vsftpd.conf&gedit /etc/vsftpd.conf
 	service vsftpd restart
-	printTime "ftp, sftp, saft, ftps-data, and ftps ports have been allowed on the firewall. vsFTPd service has been restarted."
+	scriptLog "ftp, sftp, saft, ftps-data, and ftps ports have been allowed on the firewall. vsFTPd service has been restarted."
 else
 	echo Response not recognized.
 fi
-printTime "FTP is complete."
+scriptLog "FTP is complete."
 
 
 clear
@@ -153,7 +153,7 @@ if [ $sshYN == no ]
 then
 	ufw deny ssh
 	apt-get purge openssh-server -y -qq
-	printTime "SSH port has been denied on the firewall. Open-SSH has been removed."
+	scriptLog "SSH port has been denied on the firewall. Open-SSH has been removed."
 elif [ $sshYN == yes ]
 then
 	apt-get install openssh-server -y -qq
@@ -166,11 +166,11 @@ then
 	mkdir ~/.ssh
 	chmod 700 ~/.ssh
 	ssh-keygen -t rsa
-	printTime "SSH port has been allowed on the firewall. SSH config file has been configured. SSH RSA 2048 keys have been created."
+	scriptLog "SSH port has been allowed on the firewall. SSH config file has been configured. SSH RSA 2048 keys have been created."
 else
 	echo Response not recognized.
 fi
-printTime "SSH is complete."
+scriptLog "SSH is complete."
 
 clear
 if [ $telnetYN == no ]
@@ -182,17 +182,17 @@ then
 	apt-get purge telnetd -y -qq
 	apt-get purge inetutils-telnetd -y -qq
 	apt-get purge telnetd-ssl -y -qq
-	printTime "Telnet port has been denied on the firewall and Telnet has been removed."
+	scriptLog "Telnet port has been denied on the firewall and Telnet has been removed."
 elif [ $telnetYN == yes ]
 then
 	ufw allow telnet 
 	ufw allow rtelnet 
 	ufw allow telnets
-	printTime "Telnet port has been allowed on the firewall."
+	scriptLog "Telnet port has been allowed on the firewall."
 else
 	echo Response not recognized.
 fi
-printTime "Telnet is complete."
+scriptLog "Telnet is complete."
 
 
 
@@ -205,7 +205,7 @@ then
 	ufw deny imap2 
 	ufw deny imaps 
 	ufw deny pop3s
-	printTime "smtp, pop2, pop3, imap2, imaps, and pop3s ports have been denied on the firewall."
+	scriptLog "smtp, pop2, pop3, imap2, imaps, and pop3s ports have been denied on the firewall."
 elif [ $mailYN == yes ]
 then
 	ufw allow smtp 
@@ -214,11 +214,11 @@ then
 	ufw allow imap2 
 	ufw allow imaps 
 	ufw allow pop3s
-	printTime "smtp, pop2, pop3, imap2, imaps, and pop3s ports have been allowed on the firewall."
+	scriptLog "smtp, pop2, pop3, imap2, imaps, and pop3s ports have been allowed on the firewall."
 else
 	echo Response not recognized.
 fi
-printTime "Mail is complete."
+scriptLog "Mail is complete."
 
 
 
@@ -228,17 +228,17 @@ then
 	ufw deny ipp 
 	ufw deny printer 
 	ufw deny cups
-	printTime "ipp, printer, and cups ports have been denied on the firewall."
+	scriptLog "ipp, printer, and cups ports have been denied on the firewall."
 elif [ $printYN == yes ]
 then
 	ufw allow ipp 
 	ufw allow printer 
 	ufw allow cups
-	printTime "ipp, printer, and cups ports have been allowed on the firewall."
+	scriptLog "ipp, printer, and cups ports have been allowed on the firewall."
 else
 	echo Response not recognized.
 fi
-printTime "Printing is complete."
+scriptLog "Printing is complete."
 
 
 
@@ -260,7 +260,7 @@ then
 	apt-get purge mysql-client-5.5 -y -qq
 	apt-get purge mysql-client-5.6 -y -qq
 	apt-get purge mysql-server-core-5.6 -y -qq
-	printTime "ms-sql-s, ms-sql-m, mysql, and mysql-proxy ports have been denied on the firewall. MySQL has been removed."
+	scriptLog "ms-sql-s, ms-sql-m, mysql, and mysql-proxy ports have been denied on the firewall. MySQL has been removed."
 elif [ $dbYN == yes ]
 then
 	ufw allow ms-sql-s 
@@ -278,11 +278,11 @@ then
 	fi
 	gedit /etc/my.cnf&gedit /etc/mysql/my.cnf&gedit /usr/etc/my.cnf&gedit ~/.my.cnf
 	service mysql restart
-	printTime "ms-sql-s, ms-sql-m, mysql, and mysql-proxy ports have been allowed on the firewall. MySQL has been installed. MySQL config file has been secured. MySQL service has been restarted."
+	scriptLog "ms-sql-s, ms-sql-m, mysql, and mysql-proxy ports have been allowed on the firewall. MySQL has been installed. MySQL config file has been secured. MySQL service has been restarted."
 else
 	echo Response not recognized.
 fi
-printTime "MySQL is complete."
+scriptLog "MySQL is complete."
 
 
 
@@ -293,7 +293,7 @@ then
 	ufw deny https
 	apt-get purge apache2 -y -qq
 	rm -r /var/www/*
-	printTime "http and https ports have been denied on the firewall. Apache2 has been removed. Web server files have been removed."
+	scriptLog "http and https ports have been denied on the firewall. Apache2 has been removed. Web server files have been removed."
 elif [ $httpYN == yes ]
 then
 	apt-get install apache2 -y -qq
@@ -306,11 +306,11 @@ then
 	fi
 	chown -R root:root /etc/apache2
 
-	printTime "http and https ports have been allowed on the firewall. Apache2 config file has been configured. Only root can now access the Apache2 folder."
+	scriptLog "http and https ports have been allowed on the firewall. Apache2 config file has been configured. Only root can now access the Apache2 folder."
 else
 	echo Response not recognized.
 fi
-printTime "Web Server is complete."
+scriptLog "Web Server is complete."
 
 
 
@@ -319,15 +319,15 @@ if [ $dnsYN == no ]
 then
 	ufw deny domain
 	apt-get purge bind9 -qq
-	printTime "domain port has been denied on the firewall. DNS name binding has been removed."
+	scriptLog "domain port has been denied on the firewall. DNS name binding has been removed."
 elif [ $dnsYN == yes ]
 then
 	ufw allow domain
-	printTime "domain port has been allowed on the firewall."
+	scriptLog "domain port has been allowed on the firewall."
 else
 	echo Response not recognized.
 fi
-printTime "DNS is complete."
+scriptLog "DNS is complete."
 
 
 clear
@@ -350,7 +350,7 @@ then
 	find / -name "*.flac" -type f >> ~/Desktop/Script.log
 	find / -name "*.ogg" -type f >> ~/Desktop/Script.log
 	clear
-	printTime "All audio files has been listed."
+	scriptLog "All audio files has been listed."
 
 	find / -name "*.mpeg" -type f >> ~/Desktop/Script.log
 	find / -name "*.mpg" -type f >> ~/Desktop/Script.log
@@ -396,7 +396,7 @@ then
 	find / -name "*.flv" -type f >> ~/Desktop/Script.log
 	find / -name "*.m4v" -type f >> ~/Desktop/Script.log
 	clear
-	printTime "All video files have been listed."
+	scriptLog "All video files have been listed."
 	
 	find / -name "*.tiff" -type f >> ~/Desktop/Script.log
 	find / -name "*.tif" -type f >> ~/Desktop/Script.log
@@ -418,18 +418,18 @@ then
 	find / -name "*.svg" -type f >> ~/Desktop/Script.log
 	find / -name "*.svgz" -type f >> ~/Desktop/Script.log
 	clear
-	printTime "All image files have been listed."
+	scriptLog "All image files have been listed."
 else
 	echo Response not recognized.
 fi
-printTime "Media files are complete."
+scriptLog "Media files are complete."
 
 clear
 chmod 777 /etc/apt/apt.conf.d/10periodic
 cp /etc/apt/apt.conf.d/10periodic ~/Desktop/backups/
 echo -e "APT::Periodic::Update-Package-Lists \"1\";\nAPT::Periodic::Download-Upgradeable-Packages \"1\";\nAPT::Periodic::AutocleanInterval \"1\";\nAPT::Periodic::Unattended-Upgrade \"1\";" > /etc/apt/apt.conf.d/10periodic
 chmod 644 /etc/apt/apt.conf.d/10periodic
-printTime "Daily update checks, download upgradeable packages, autoclean interval, and unattended upgrade enabled."
+scriptLog "Daily update checks, download upgradeable packages, autoclean interval, and unattended upgrade enabled."
 
 clear
-printTime "Script is complete."
+scriptLog "Script is complete."
